@@ -1,5 +1,6 @@
 import ExpoModulesCore
 import ActivityKit
+import WidgetKit
 
 internal class MissingCurrentWindowSceneException: Exception {
     override var reason: String {
@@ -25,6 +26,14 @@ public class ReactNativeWidgetExtensionModule: Module {
             logger.info("areActivitiesEnabled()")
 
             return false
+        }
+
+        // Function to call from JS
+        Function("reloadWidget") { () in
+            // Trigger a widget update to sync the data
+            if #available(iOS 14.0, *) {
+                WidgetCenter.shared.reloadAllTimelines()
+            }
         }
     }
 }

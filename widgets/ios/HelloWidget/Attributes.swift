@@ -1,15 +1,10 @@
-import Foundation
 import ActivityKit
+import WidgetKit
+import SwiftUI
 
-struct Attributes: ActivityAttributes {
-    public typealias PizzaDeliveryStatus = ContentState
+// empty - just to feed the config plugin
 
+struct HelloWidgetActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var driverName: String
-        var deliveryTimer: ClosedRange<Date>
     }
-
-    var numberOfPizzas: Int
-    var totalAmount: String
-    var orderNumber: String
 }

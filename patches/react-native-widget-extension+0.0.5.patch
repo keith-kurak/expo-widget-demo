@@ -1,0 +1,75 @@
+diff --git a/node_modules/react-native-widget-extension/build/index.js b/node_modules/react-native-widget-extension/build/index.js
+index 4612f45..24ba102 100644
+--- a/node_modules/react-native-widget-extension/build/index.js
++++ b/node_modules/react-native-widget-extension/build/index.js
+@@ -11,4 +11,7 @@ export function updateActivity(...args) {
+ export function endActivity(...args) {
+     return ReactNativeWidgetExtension.endActivity(...args);
+ }
++export function reloadWidget(...args) {
++    return ReactNativeWidgetExtension.reloadWidget(...args);
++}
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/react-native-widget-extension/ios/Attributes.swift b/node_modules/react-native-widget-extension/ios/Attributes.swift
+new file mode 100644
+index 0000000..56b5d61
+--- /dev/null
++++ b/node_modules/react-native-widget-extension/ios/Attributes.swift
+@@ -0,0 +1,10 @@
++import ActivityKit
++import WidgetKit
++import SwiftUI
++
++// empty - just to feed the config plugin
++
++struct HelloWidgetActivityAttributes: ActivityAttributes {
++    public struct ContentState: Codable, Hashable {
++    }
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-widget-extension/ios/Module.swift b/node_modules/react-native-widget-extension/ios/Module.swift
+new file mode 100644
+index 0000000..94ee46c
+--- /dev/null
++++ b/node_modules/react-native-widget-extension/ios/Module.swift
+@@ -0,0 +1,39 @@
++import ExpoModulesCore
++import ActivityKit
++import WidgetKit
++
++internal class MissingCurrentWindowSceneException: Exception {
++    override var reason: String {
++        "Cannot determine the current window scene in which to present the modal for requesting a review."
++    }
++}
++
++public class ReactNativeWidgetExtensionModule: Module {
++    // Each module class must implement the definition function. The definition consists of components
++    // that describes the module's functionality and behavior.
++    // See https://docs.expo.dev/modules/module-api for more details about available components.
++    public func definition() -> ModuleDefinition {
++        // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
++        // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
++        // The module will be accessible from `requireNativeModule('ReactNativeAppClip')` in JavaScript.
++        Name("ReactNativeWidgetExtension")
++
++        // Defines event names that the module can send to JavaScript.
++        Events("onChange")
++
++        Function("areActivitiesEnabled") { () -> Bool in
++            let logger = Logger()
++            logger.info("areActivitiesEnabled()")
++
++            return false
++        }
++
++        // Function to call from JS
++        Function("reloadWidget") { () in
++            // Trigger a widget update to sync the data
++            if #available(iOS 14.0, *) {
++                WidgetCenter.shared.reloadAllTimelines()
++            }
++        }
++    }
++}

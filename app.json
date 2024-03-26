@@ -19,7 +19,10 @@
         "NSSupportsLiveActivities": true,
         "NSSupportsLiveActivitiesFrequentUpdates": true
       },
-      "bundleIdentifier": "com.keith-kurak.expo-widget-demo"
+      "bundleIdentifier": "com.keith-kurak.expo-widget-demo",
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.keith-kurak.expo-widget-demo"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -64,6 +67,25 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "bundleIdentifier": "com.keith-kurak.expo-widget-demo.expowidgetdemoWidgets",
+                  "targetName": "expowidgetdemoWidgets",
+                  "entitlements": {
+                    "com.apple.security.application-groups": ["group.com.keith-kurak.expo-widget-demo"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
     }
   }
 }

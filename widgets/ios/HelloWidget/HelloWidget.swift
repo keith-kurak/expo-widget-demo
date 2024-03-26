@@ -3,40 +3,47 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), totalPizzas: 0)
+        SimpleEntry(date: Date(), text: "what's up2?")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), totalPizzas: 32)
+        // TODO: I don't understand getSnapshot when we have getTimeline, gotta look up this API
+        let entry = SimpleEntry(date: Date(), text: "what's up3?")
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, totalPizzas: 32)
-            entries.append(entry)
+        guard let groupDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.keith-kurak.expo-widget-demo") else {
+            fatalError("could not get shared app group directory.")
         }
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+        let fileUrl = groupDir.appendingPathComponent("demo.txt")
+
+        do {
+            let text = try String(contentsOf: fileUrl, encoding: .utf8)
+            let entry = SimpleEntry(date: Date(), text: text)
+            // Some other stuff to make the widget update...
+            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            completion(timeline)
+        } catch {
+            let entry = SimpleEntry(date: Date(), text: "")
+            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            completion(timeline)
+        }
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let totalPizzas: Int
+    let text: String
 }
 
 struct HelloWidgetEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        Text(entry.totalPizzas > 0 ? "You've eaten \(entry.totalPizzas) pizzas!" : "Why u no eat pizza?")
+        Text(!entry.text.isEmpty ? "Hello: \(entry.text)" : "Nothing yet!")
     }
 }
 
@@ -47,14 +54,14 @@ struct HelloWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             HelloWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Hey Pizza!")
-        .description("Get your pizzas super-fast!")
+        .configurationDisplayName("Hello Widget!")
+        .description("All the hellos on your home screen.")
     }
 }
 
 struct HelloWidget_Previews: PreviewProvider {
     static var previews: some View {
-        HelloWidgetEntryView(entry: SimpleEntry(date: Date(), totalPizzas: 0))
+        HelloWidgetEntryView(entry: SimpleEntry(date: Date(), text: "whats up?"))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }

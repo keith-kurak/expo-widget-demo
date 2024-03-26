@@ -12,17 +12,21 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSupportsLiveActivities": true,
+        "NSSupportsLiveActivitiesFrequentUpdates": true
+      },
+      "bundleIdentifier": "com.keith-kurak.expo-widget-demo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.keithkurak.expowidgetdemo"
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +34,33 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Hello",
+              "label": "My Hello Widget",
+              "minWidth": "100dp",
+              "minHeight": "80dp",
+              "targetCellWidth": "2",
+              "targetCellHeight": "2",
+              "description": "This is my first widget",
+              "previewImage": "./assets/images/icon.png",
+              "updatePeriodMillis": 1800000,
+              "resizeMode": "horizontal|vertical"
+            }
+          ]
+        }
+      ],
+      [
+        "react-native-widget-extension",
+        {
+          "frequentUpdates": true,
+          "widgetsFolder": "./widgets/ios/HelloWidget"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
